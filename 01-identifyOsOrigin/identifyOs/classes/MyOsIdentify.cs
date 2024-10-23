@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace identifyOs.classes
 {
-    public class MyOsClass
+    public class MyOsIdentify
     {
         private string _osSystem { get; set; }
         public string StoreLink { get; private set; }
@@ -15,7 +15,7 @@ namespace identifyOs.classes
 
         private const string _DEFAULTSTORELINK = "https://www.chevrolet.com.br/";
 
-        public MyOsClass(HttpContext httpContext)
+        public MyOsIdentify(HttpContext httpContext)
         {
             _osSystem = string.Empty;
             try
