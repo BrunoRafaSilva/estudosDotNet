@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 
 //  https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Sec-CH-UA-Platform
 
-namespace identifyOs.classes
+namespace identifyOs.Views
 {
     public class MyOsIdentify
     {
@@ -15,21 +15,23 @@ namespace identifyOs.classes
 
         private const string _DEFAULTSTORELINK = "https://www.chevrolet.com.br/";
 
+        private const string _DEFAULTCLIENTOS = "Unknown";
+
         public MyOsIdentify(HttpContext httpContext)
         {
-            _osSystem = string.Empty;
+            _osSystem = _DEFAULTCLIENTOS;
             try
             {
                 _osSystem = httpContext.Request.Headers["sec-ch-ua-platform"].ToString().Trim('"').ToUpper();
                 
                 if(string.IsNullOrEmpty(_osSystem)){
-                    _osSystem = httpContext.Request.Headers["user-agent"].ToString().ToUpper();
+                    _osSystem = _DEFAULTCLIENTOS;
                 }
             }
             catch (System.Exception)
             {
                 StoreLink = _DEFAULTSTORELINK;
-                ClientOs = "Unknown";
+                ClientOs = _DEFAULTCLIENTOS;
                 return;
             }
 
