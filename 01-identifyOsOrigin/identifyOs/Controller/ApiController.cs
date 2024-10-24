@@ -2,9 +2,11 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using identifyOs.Database.Models;
 using identifyOs.Interfaces;
 using identifyOs.Views;
 using Microsoft.AspNetCore.Mvc;
+using Supabase;
 
 namespace identifyOs.Controller
 {
@@ -12,11 +14,10 @@ namespace identifyOs.Controller
     [Route("/[controller]")]
     public class ApiController : ControllerBase
     {
-        [HttpGet("myos")]
-        public IActionResult GetMyOs()
+        private readonly Client _supabaseClient;
+        public ApiController(Client supabaseClient)
         {
-            var clientOs = new MyOsIdentify(HttpContext);
-            return Ok(clientOs);
+            _supabaseClient = supabaseClient;
         }
 
         [HttpGet("redirecttoapp")]
@@ -26,17 +27,21 @@ namespace identifyOs.Controller
             return Redirect(clientOs.StoreLink);
         }
 
+        // colocar DynamicLinkTracking faz com que ele seja o modelo de entrada
         [HttpPost("generatedynamiclinktracking")]
         public IActionResult GenerateDynamicLinkTracking([FromBody] DynamicLinkTracking request)
         {
-            var reponse = new DynamicLinkTracking
-            {
-                TemplateName = request.TemplateName,
-                TemplateVersion = request.TemplateName,
-                ClientNumber = request.TemplateName,
-            };
+            var clientOs = new MyOsIdentify(HttpContext);
+            var response = new DynamicLinkTracking(request.TemplateName, request.TemplateVersion, request.ClientNumber, clientOs.StoreLink);
+            return Ok(response);
+        }
 
-            return Ok(reponse);
+        [HttpGet("cassino")]
+        public async Task<IActionResult> GetOs()
+        {
+            // Use o _supabaseClient para interagir com o Supabase
+            var response = await _supabaseClient.From<TesteTable>().Get();
+            return Ok(response.Models);
         }
     }
 }
