@@ -5,12 +5,11 @@ using System.Threading.Tasks;
 
 namespace identifyOs.Interfaces
 {
-    public interface IDynamicLinkTracking
+    public interface IDynamicLinkTemplate
     {
         public string TemplateName { get; set; }
         public string TemplateVersion { get; set; }
         public string ClientNumber { get; set; }
-        public string StoreLink { get; set; }
     }
     
 }

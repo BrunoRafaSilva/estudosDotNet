@@ -2,11 +2,10 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using identifyOs.Database.Models;
 using identifyOs.Interfaces;
 using identifyOs.Views;
 using Microsoft.AspNetCore.Mvc;
-using Supabase;
+
 
 namespace identifyOs.Controller
 {
@@ -14,11 +13,6 @@ namespace identifyOs.Controller
     [Route("/[controller]")]
     public class ApiController : ControllerBase
     {
-        private readonly Client _supabaseClient;
-        public ApiController(Client supabaseClient)
-        {
-            _supabaseClient = supabaseClient;
-        }
 
         [HttpGet("redirecttoapp")]
         public IActionResult RedirectToApp()
@@ -28,20 +22,22 @@ namespace identifyOs.Controller
         }
 
         // colocar DynamicLinkTracking faz com que ele seja o modelo de entrada
-        [HttpPost("generatedynamiclinktracking")]
-        public IActionResult GenerateDynamicLinkTracking([FromBody] DynamicLinkTracking request)
+        [HttpPost("dynamiclinkbytemplate")]
+        public IActionResult GenerateDynamicLinkTracking([FromBody] DynamicLinkTemplate request)
         {
             var clientOs = new MyOsIdentify(HttpContext);
-            var response = new DynamicLinkTracking(request.TemplateName, request.TemplateVersion, request.ClientNumber, clientOs.StoreLink);
+            var response = new DynamicLinkTemplate(request.TemplateName, request.TemplateVersion, request.ClientNumber, clientOs.StoreLink).GetResult();
             return Ok(response);
         }
 
-        [HttpGet("cassino")]
-        public async Task<IActionResult> GetOs()
+        [HttpGet("dynamiclinkbyparams")]
+        public IActionResult GenerateDynamicLinkParams([FromQuery] DynamicLinkParams request)
         {
-            // Use o _supabaseClient para interagir com o Supabase
-            var response = await _supabaseClient.From<TesteTable>().Get();
-            return Ok(response.Models);
+            var clientOs = new MyOsIdentify(HttpContext);
+            var response = new DynamicLinkParams(request.TrackingCategory, request.TrackingAction, request.ClientNumber, request.PlayStore, request.AppStore, request.Alternative, request.RouterAuthorization).GetLink(clientOs);
+            return Ok(response);
+
         }
+
     }
 }

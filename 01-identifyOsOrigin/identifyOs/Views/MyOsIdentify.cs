@@ -40,11 +40,11 @@ namespace identifyOs.Views
                     StoreLink = "https://play.google.com/store/apps/details?id=com.gm.chevrolet.nomad.ownership&hl=pt_BR";
                     break;
 
-                case "CHROME OS":
+                case "CHROMEOS":
                     StoreLink = "https://play.google.com/store/apps/details?id=com.gm.chevrolet.nomad.ownership&hl=pt_BR";
                     break;
 
-                case "CHROMIUM OS":
+                case "CHROMIUMOS":
                     StoreLink = "https://play.google.com/store/apps/details?id=com.gm.chevrolet.nomad.ownership&hl=pt_BR";
                     break;
 
