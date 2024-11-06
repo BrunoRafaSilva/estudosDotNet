@@ -18,7 +18,7 @@ namespace identifyOs.Controller
         public IActionResult RedirectToApp()
         {
             var clientOs = new MyOsIdentify(HttpContext);
-            return Redirect(clientOs.StoreLink);
+            return Redirect(clientOs.OsSystem);
         }
 
         // colocar DynamicLinkTracking faz com que ele seja o modelo de entrada
@@ -26,7 +26,7 @@ namespace identifyOs.Controller
         public IActionResult GenerateDynamicLinkTracking([FromBody] DynamicLinkTemplate request)
         {
             var clientOs = new MyOsIdentify(HttpContext);
-            var response = new DynamicLinkTemplate(request.TemplateName, request.TemplateVersion, request.ClientNumber, clientOs.StoreLink).GetResult();
+            var response = new DynamicLinkTemplate(request.TemplateName, request.TemplateVersion, request.ClientNumber, clientOs.OsSystem).GetResult();
             return Ok(response);
         }
 
@@ -34,8 +34,8 @@ namespace identifyOs.Controller
         public IActionResult GenerateDynamicLinkParams([FromQuery] DynamicLinkParams request)
         {
             var clientOs = new MyOsIdentify(HttpContext);
-            var response = new DynamicLinkParams(request.TrackingCategory, request.TrackingAction, request.ClientNumber, request.PlayStore, request.AppStore, request.Alternative, request.RouterAuthorization).GetLink(clientOs);
-            return Ok(response);
+            var response = new DynamicLinkParams(request.TrackingCategory, request.TrackingAction, request.PlayStore, request.AppStore, request.Alternative, request.RouterAuthorization).GetLink(clientOs.OsSystem);
+            return Redirect(response);
 
         }
 

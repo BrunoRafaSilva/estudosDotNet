@@ -7,9 +7,9 @@ namespace identifyOs.Interfaces
 {
     public interface IDynamicLinkTemplate
     {
-        public string TemplateName { get; set; }
-        public string TemplateVersion { get; set; }
-        public string ClientNumber { get; set; }
+        public String TemplateName { get; set; }
+        public String TemplateVersion { get; set; }
+        public String ClientNumber { get; set; }
     }
     
 }

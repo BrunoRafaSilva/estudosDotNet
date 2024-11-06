@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using System.Web;
 using identifyOs.Interfaces;
+using Newtonsoft.Json;
 
 namespace identifyOs.Views
 {
@@ -15,26 +16,28 @@ namespace identifyOs.Views
         public String AppStore { get; set; }
         public String Alternative { get; set; }
         public String RouterAuthorization { get; set; }
-        private string _redirectLink { get; set; }
+        [JsonIgnore]
+        private String _redirectLink { get; set; }
 
-        const string CLICKTRACKING = "https://click-tracking.cs.blip.ai/api/Track";
-        public DynamicLinkParams(string trackingCategory, string trackingAction, string playStore, string appStore, string alternative, string routerAuthorization)
+        const String CLICKTRACKING = "https://click-tracking.cs.blip.ai/api/Track";
+        public DynamicLinkParams() { }
+        public DynamicLinkParams(String trackingCategory, String trackingAction, String playStore, String appStore, String alternative, String routerAuthorization)
         {
             TrackingCategory = HttpUtility.UrlEncode(trackingCategory);
-            TrackingAction = HttpUtility.UrlEncode(trackingAction);
+            TrackingAction = trackingAction;
             PlayStore = HttpUtility.UrlEncode(playStore);
             AppStore = HttpUtility.UrlEncode(appStore);
             Alternative = HttpUtility.UrlEncode(alternative);
             RouterAuthorization = HttpUtility.UrlEncode(routerAuthorization);
         }
 
-        public string GetLink(string clientOs)
+        public String GetLink(String clientOs)
         {
-            if (clientOs == "ANDROID")
+            if (clientOs == "Android")
             {
                 _redirectLink = PlayStore;
             }
-            else if (clientOs == "IOS")
+            else if (clientOs == "iPhone" || clientOs == "iPad" || clientOs == "iOS")
             {
                 _redirectLink = AppStore;
             }
@@ -42,7 +45,8 @@ namespace identifyOs.Views
             {
                 _redirectLink = Alternative;
             }
-            var trackingUrl = $"{CLICKTRACKING}?category={TrackingCategory}&action={TrackingAction}&authorization={RouterAuthorization}&url={_redirectLink}";
+            var finalAction = HttpUtility.UrlEncode($"{TrackingAction} | {clientOs}");
+            var trackingUrl = $"{CLICKTRACKING}?category={TrackingCategory}&action={finalAction}&authorization={RouterAuthorization}&url={_redirectLink}";
 
             return trackingUrl;
         }

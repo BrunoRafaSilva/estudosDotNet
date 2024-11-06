@@ -2,73 +2,55 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using identifyOs.Interfaces;
 
 //  https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Sec-CH-UA-Platform
 
 namespace identifyOs.Views
 {
-    public class MyOsIdentify
+    public class MyOsIdentify : IMyOsIdentify
     {
-        private string _osSystem { get; set; }
-        public string StoreLink { get; private set; }
+        public HttpContext HttpContexto { get; set; }
+        public String OsSystem { get; private set; }
+        private String _osSystem { get; set; }
+        private const String USERAGENT = "User-Agent";
+        private const String SEC_CH_UA_PLATFORM = "Sec-CH-UA-Platform";
+        public const String _DEFAULTCLIENTOS = "Unknown";
 
-        private const string _DEFAULTSTORELINK = "https://www.chevrolet.com.br/";
+        private readonly List<String> _osList = ["Android", "iPhone", "iPad", "iOS"];
 
-        private const string _DEFAULTCLIENTOS = "Unknown";
-
-        public MyOsIdentify(HttpContext httpContext)
+        public MyOsIdentify(HttpContext HttpContexto)
         {
-            _osSystem = _DEFAULTCLIENTOS;
-            try
-            {
-                _osSystem = httpContext.Request.Headers["sec-ch-ua-platform"].ToString().Trim('"').ToUpper();
+            _osSystem = ValidatePlataform(HttpContexto);
 
-                if (string.IsNullOrEmpty(_osSystem))
-                {
-                    _osSystem = _DEFAULTCLIENTOS;
-                }
-            }
-            catch (System.Exception)
+            var osSystem = _osList.Find(a => _osSystem.ToUpper().Contains(a.ToUpper()));
+
+            if (osSystem == null)
             {
-                StoreLink = _DEFAULTSTORELINK;
+                OsSystem = _osSystem;
                 return;
             }
 
-            switch (_osSystem)
+            OsSystem = osSystem;
+
+        }
+
+        static String ValidatePlataform(HttpContext httpContext, String defaultClientOs = _DEFAULTCLIENTOS)
+        {
+            String clientPlataform;
+            if (httpContext.Request.Headers.ContainsKey(SEC_CH_UA_PLATFORM))
             {
-                case "ANDROID":
-                    StoreLink = "https://play.google.com/store/apps/details?id=com.gm.chevrolet.nomad.ownership&hl=pt_BR";
-                    break;
-
-                case "CHROMEOS":
-                    StoreLink = "https://play.google.com/store/apps/details?id=com.gm.chevrolet.nomad.ownership&hl=pt_BR";
-                    break;
-
-                case "CHROMIUMOS":
-                    StoreLink = "https://play.google.com/store/apps/details?id=com.gm.chevrolet.nomad.ownership&hl=pt_BR";
-                    break;
-
-                case "IOS":
-                    StoreLink = "https://apps.apple.com/br/app/mychevrolet/id398596699";
-                    break;
-
-                case "LINUX":
-                    StoreLink = _DEFAULTSTORELINK;
-                    break;
-
-                case "MACOS":
-                    StoreLink = _DEFAULTSTORELINK;
-                    break;
-
-                case "WINDOWS":
-                    StoreLink = _DEFAULTSTORELINK;
-                    break;
-
-                default:
-                    StoreLink = _DEFAULTSTORELINK;
-                    break;
+                clientPlataform = httpContext.Request.Headers[SEC_CH_UA_PLATFORM].ToString();
             }
-
+            else if (httpContext.Request.Headers.ContainsKey(USERAGENT))
+            {
+                clientPlataform = httpContext.Request.Headers[USERAGENT].ToString();
+            }
+            else
+            {
+                clientPlataform = defaultClientOs;
+            }
+            return clientPlataform;
         }
     }
 }

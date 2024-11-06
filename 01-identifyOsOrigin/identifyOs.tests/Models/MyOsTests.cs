@@ -7,7 +7,7 @@ namespace identifyOs.tests.Models
 {
     public class MyOsTests
     {
-        required public string ClientOs { get; set; }
-        required public string StoreLink { get; set; }
+        required public String ClientOs { get; set; }
+        required public String StoreLink { get; set; }
     }
 }
